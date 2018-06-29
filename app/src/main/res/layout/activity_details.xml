@@ -7,6 +7,11 @@
     android:layout_height="match_parent"
     tools:context=".DetailsActivity">
 
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/details_progress_bar"
+        />
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="300dp"
@@ -64,6 +69,15 @@
         android:text="Trailers"
         android:padding="8dp"
         />
+
+    <android.support.v7.widget.RecyclerView
+        android:paddingTop="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/trailers_RV"
+        >
+
+    </android.support.v7.widget.RecyclerView>
 
 
 

@@ -21,6 +21,7 @@ public class NetworkUtils {
     private static final String LANGUAGE = "&language=en-US";
     private static final String BY_POPULAR= "/popular";
     private static final String BY_TOP_RATED= "/top_rated";
+    private static final String TRAILERS = "/videos";
 
 
     public static String getResponseFromHttpUrl(URL url) throws IOException {
@@ -78,5 +79,22 @@ public class NetworkUtils {
         }
         return null;
 
+    }
+
+    public static URL generateUrlForTrailers(int movieID) {
+        String str;
+        URL url;
+
+        //https://api.themoviedb.org/3/movie/{movie_id}/videos?api_key=<<api_key>>&language=en-US
+
+        str = BASE_URL+"/"+movieID+TRAILERS+MY_API_KEY+ LANGUAGE;
+
+        try {
+            url = new URL(str);
+            return url;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

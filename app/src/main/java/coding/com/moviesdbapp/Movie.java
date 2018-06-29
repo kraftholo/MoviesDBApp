@@ -12,6 +12,33 @@ public class Movie implements Parcelable {
     private Double userRating;      //vote_average
     private String releaseDate;
     private String originalTitle;
+    private int movieID;
+    private Double popularity;
+    private int voteCount;
+
+    public int getMovieID() {
+        return movieID;
+    }
+
+    public void setMovieID(int movieID) {
+        this.movieID = movieID;
+    }
+
+    public Double getPopularity() {
+        return popularity;
+    }
+
+    public void setPopularity(Double popularity) {
+        this.popularity = popularity;
+    }
+
+    public int getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(int voteCount) {
+        this.voteCount = voteCount;
+    }
 
     public Movie() {
     }
@@ -22,6 +49,9 @@ public class Movie implements Parcelable {
         userRating = in.readDouble();
         releaseDate = in.readString();
         originalTitle = in.readString();
+        movieID = in.readInt();
+        voteCount= in.readInt();
+        popularity = in.readDouble();
     }
 
     public String getPosterPath() {
@@ -76,6 +106,9 @@ public class Movie implements Parcelable {
         parcel.writeDouble(userRating);
         parcel.writeString(releaseDate);
         parcel.writeString(originalTitle);
+        parcel.writeInt(movieID);
+        parcel.writeDouble(popularity);
+        parcel.writeInt(voteCount);
     }
 
     public static Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>(){

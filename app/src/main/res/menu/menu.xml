@@ -13,6 +13,9 @@
             <item android:title="Top Rated"
                 android:id="@+id/menu_item_top_rated"
                 app:showAsAction="never"/>
+            <item android:title="Favourites"
+                  android:id="@+id/menu_item_favourites"
+                  app:showAsAction="never"/>
         </menu>
 
     </item>

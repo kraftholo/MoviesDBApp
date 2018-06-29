@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 
     //todo: FIX the  empty recyclerView on first load due to NoAdapterAttached
+    //todo: FIX the same problem in details activity
+    //todo: android:authorities in strings.xml
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int MOVIEDB_LOADER_ID = 123;
@@ -49,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             if(savedInstanceState.containsKey(SORTORDER_KEY)){
 
                 sortStatus=savedInstanceState.getBoolean(SORTORDER_KEY);
-                Log.e(TAG, "VALUE OF SORTSTATUS IS received "+sortStatus );
+
             }
             if(savedInstanceState.containsKey(MOVIE_LIST_KEY)){
                moviesList =savedInstanceState.getParcelableArrayList(MOVIE_LIST_KEY);
@@ -83,20 +85,23 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        switch (id){
+        switch (id) {
             case R.id.menu_item_most_popular:
                 Log.d(TAG, "onOptionsItemSelected: Sorting by MOST POPULAR ");
-                sortStatus=true;
+                sortStatus = true;
                 recreate();
                 break;
 
             case R.id.menu_item_top_rated:
                 Log.d(TAG, "onOptionsItemSelected: Sorting by TOP RATED");
-                sortStatus=false;
+                sortStatus = false;
                 recreate();
                 break;
-        }
+            case R.id.menu_item_favourites:
+                Log.d(TAG, "onOptionsItemSelected: show FAVOURITES");
+                //todo: Make the call to the contentProvider to get the db and change my arrayList given to the adapter
 
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -109,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             @Override
             protected void onStartLoading() {
-                //todo: here check jsonStr is null or not , also make the progressbar visible
+
                 mLoadingBar.setVisibility(View.VISIBLE);
 
 
@@ -117,8 +122,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
 
             @Override
+
             public String loadInBackground() {
-                //todo: Here make the call to the api and  get info in form of jsonStr
+                //todo(C): Here make the call to the api and  get info in form of jsonStr
                 URL url = NetworkUtils.generateUrl(sortStatus);
                 try {
                     jsonStr = NetworkUtils.getResponseFromHttpUrl(url);
@@ -135,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<String> loader, String data) {
-        //todo: here from the jsonStr make ur arraylist of movie objects ,make recyclerview visible
+        //todo(C): here from the jsonStr make ur arraylist of movie objects ,make recyclerview visible
         moviesList = JsonUtils.generateMovieList(data);
 
         MoviesAdapter mAdapter = new MoviesAdapter(this,this,moviesList);
@@ -159,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.e(TAG, "VALUE OF SORTSTATUS IS sent "+sortStatus );
+
         outState.putBoolean(SORTORDER_KEY,sortStatus);
         outState.putParcelableArrayList(MOVIE_LIST_KEY,moviesList);
     }
