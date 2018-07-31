@@ -35,6 +35,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         void onClick(Movie movie);
     }
 
+    public void swapList(ArrayList<Movie> newList){
+        listOfMovies = newList;
+        if(listOfMovies!=null){
+            this.notifyDataSetChanged();
+        }
+    }
+
     @NonNull
     @Override
     public MoviesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -55,6 +62,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
     @Override
     public int getItemCount() {
+        if(listOfMovies==null)return 0;
         return listOfMovies.size();
     }
 

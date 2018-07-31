@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,6 +49,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     ImageView mThumbnailIV;
     ProgressBar mProgressBar;
     RecyclerView trailerRV;
+    TrailersAdapter mTrailerAdapter;
 
     private static final String TAG = DetailsActivity.class.getSimpleName();
 
@@ -70,7 +70,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     public static final int RELEASE_DATE_INDEX= 7;
 
 
-    private ArrayList<Trailer> trailerArrayList;
+
 
 
 
@@ -84,7 +84,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         Intent intent = getIntent();
 
         if(intent.hasExtra(MainActivity.MOVIE_CLICKED_KEY)){
-            Log.e(TAG, "does have the arraylist passed" );
+
             passedList = intent.getParcelableArrayListExtra(MainActivity.MOVIE_CLICKED_KEY);
             movie = passedList.get(0);
         }
@@ -94,8 +94,19 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mUserRating = findViewById(R.id.userRatingTV);
         mReleaseDate = findViewById(R.id.releaseDateTV);
 
+
         mThumbnailIV = findViewById(R.id.details_IV);
         mProgressBar = findViewById(R.id.details_progress_bar);
+
+
+
+        mTrailerAdapter = new TrailersAdapter(this,this,null);
+
+        trailerRV = findViewById(R.id.trailers_RV);
+
+        trailerRV.setAdapter(mTrailerAdapter);
+        trailerRV.setLayoutManager(new LinearLayoutManager(this));
+        trailerRV.setVisibility(View.INVISIBLE);
 
         getLoaderManager().restartLoader(DETAILS_LOADER_ID,null,this);
 
@@ -107,6 +118,8 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mPlotSynopsis.setText(movie.getPlotSynopsis());
         mUserRating.setText(""+movie.getUserRating());
         mReleaseDate.setText(movie.getReleaseDate());
+
+
     }
 
     @Override
@@ -159,7 +172,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                URL url = NetworkUtils.generateUrlForTrailers(movie.getMovieID());
                try {
                    jsonStr = NetworkUtils.getResponseFromHttpUrl(url);
-                   Log.d(TAG, "loadInBackground: String received is "+ jsonStr);
+
                    return jsonStr;
                } catch (IOException e) {
                    e.printStackTrace();
@@ -172,20 +185,17 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
     @Override
     public void onLoadFinished(Loader<String> loader, String data) {
-        trailerArrayList = JsonUtils.generateTrailersList(data);
 
-        TrailersAdapter mAdapter = new TrailersAdapter(this,this,trailerArrayList);
-
-        trailerRV = findViewById(R.id.trailers_RV);
-        trailerRV.setAdapter(mAdapter);
-        trailerRV.setLayoutManager(new LinearLayoutManager(this));
+        ArrayList<Trailer> newList = JsonUtils.generateTrailersList(data);
 
         setValues();
+        mTrailerAdapter.swapList(newList);
 
         trailerRV.setVisibility(View.VISIBLE);
-        mProgressBar.setVisibility(View.INVISIBLE);
 
 
+
+        mProgressBar.setVisibility(View.GONE);
 
 
     }

@@ -24,8 +24,8 @@ import coding.com.moviesdbapp.Utilities.NetworkUtils;
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>,MoviesAdapter.MoviesAdapterOnClickHandler{
 
 
-    //todo: FIX the  empty recyclerView on first load due to NoAdapterAttached
-    //todo: FIX the same problem in details activity
+
+    
     //todo: android:authorities in strings.xml
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private RecyclerView mRecyclerView;
     private ProgressBar mLoadingBar;
+    private MoviesAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setContentView(R.layout.activity_main);
 
         if(savedInstanceState!=null){
-            Log.d(TAG, "SAVED_INSTANCE_STATE_WAS_NOT_NULL");
+
             if(savedInstanceState.containsKey(SORTORDER_KEY)){
 
                 sortStatus=savedInstanceState.getBoolean(SORTORDER_KEY);
@@ -67,7 +68,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mRecyclerView.setVisibility(View.INVISIBLE);
         mLoadingBar.setVisibility(View.INVISIBLE);
 
-        mRecyclerView.setAdapter(null);
+        mAdapter = new MoviesAdapter(this,this,null);
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this,2);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
+
+        mRecyclerView.setAdapter(mAdapter);
 
         getLoaderManager().restartLoader(MOVIEDB_LOADER_ID,null,this);
 
@@ -116,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             protected void onStartLoading() {
 
                 mLoadingBar.setVisibility(View.VISIBLE);
+                mRecyclerView.setVisibility(View.GONE);
 
 
                 forceLoad();
@@ -128,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 URL url = NetworkUtils.generateUrl(sortStatus);
                 try {
                     jsonStr = NetworkUtils.getResponseFromHttpUrl(url);
-                    Log.d(TAG, "loadInBackground: String received is "+ jsonStr);
+
                     return jsonStr;
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -144,12 +151,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         //todo(C): here from the jsonStr make ur arraylist of movie objects ,make recyclerview visible
         moviesList = JsonUtils.generateMovieList(data);
 
-        MoviesAdapter mAdapter = new MoviesAdapter(this,this,moviesList);
-
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this,2);
-        mRecyclerView.setLayoutManager(gridLayoutManager);
-        mRecyclerView.setAdapter(mAdapter);
-
+        mAdapter.swapList(moviesList);
 
 
         mRecyclerView.setVisibility(View.VISIBLE);
